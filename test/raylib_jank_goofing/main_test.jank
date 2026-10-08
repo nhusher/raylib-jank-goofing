@@ -1,0 +1,7 @@
+(ns raylib-jank-goofing.main-test
+  (:require [clojure.test :refer [deftest testing is]]
+            [raylib-jank-goofing.main]))
+
+(deftest a-test
+  (testing "FIXME, I fail."
+    (is (= 0 1))))

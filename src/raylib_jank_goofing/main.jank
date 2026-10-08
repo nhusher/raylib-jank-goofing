@@ -1,0 +1,12 @@
+(ns raylib-jank-goofing.main
+  (:include "raylib.h"))
+
+(defn -main [& args]
+  (cpp/InitWindow 800 450 "raylib game")
+  (cpp/SetTargetFPS 60)
+  (while (not (cpp/WindowShouldClose))
+    (cpp/BeginDrawing)
+    (cpp/ClearBackground cpp/RAYWHITE)
+    (cpp/DrawText "Hello from jank!" 190 200 20 cpp/DARKGRAY)
+    (cpp/EndDrawing))
+  (cpp/CloseWindow))
