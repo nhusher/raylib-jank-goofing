@@ -1,0 +1,23 @@
+(ns raylib-jank-goofing.structs
+  (:require [raylib-jank-goofing.assets :as assets]))
+
+;; Create stack-allocated Vector2 instance
+(defmacro vec2 [x y]
+  `(cpp/Vector2 (cpp/cast cpp/float ~x) (cpp/cast cpp/float ~y)))
+
+;; Add cpp/new to return a heap-allocated pointer to a Vector2
+(defmacro *vec2 [x y]
+  (conj (macroexpand-1 `(vec2 ~x ~y)) 'cpp/new))
+
+
+(defn window-scaling [size]
+  (let [scale (.-x (cpp/GetWindowScaleDPI))]
+    (int (* size scale))))
+
+(defmacro font [name weight size]
+  `(cpp/new cpp/Font
+            (cpp/LoadFontEx
+             (assets/asset-path "fonts" (str ~name "-" ~weight ".ttf"))
+             (cpp/cast cpp/int (window-scaling ~size))
+             cpp/nullptr
+             0)))

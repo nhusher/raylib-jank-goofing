@@ -1,13 +1,10 @@
 (ns raylib-jank-goofing.font
   (:require
-   [raylib-jank-goofing.work :as work])
+   [raylib-jank-goofing.work :as work]
+   [raylib-jank-goofing.structs :as s])
   (:include "raylib.h"))
 
 (defn asset-path [s] (str "assets/fonts/" s))
-
-(defn window-scaling [size]
-  (let [scale (.-x (cpp/GetWindowScaleDPI))]
-    (int (* size scale))))
 
 (defn load-font [name weight size]
   (let [path (asset-path (str name "-" weight ".ttf"))]
@@ -17,13 +14,7 @@
     (when-not (cpp/FileExists path)
       (throw (ex-info "Font does not exist" {:path path})))
 
-    (cpp/box
-     (cpp/new cpp/Font
-              (cpp/LoadFontEx
-               (asset-path (str name "-" weight ".ttf"))
-               (cpp/cast cpp/int (window-scaling size))
-               cpp/nullptr
-               0)))))
+    (s/font name weight size)))
 
 
 @(work/enqueue-work! #(load-font "Lato" "Black" 32))

@@ -1,0 +1,11 @@
+(ns raylib-jank-goofing.assets
+  (:require [clojure.string :as s]))
+
+(def separator "/")
+
+(defn exists? [path]
+  (cpp/FileExists path))
+
+(defn asset-path [& strs]
+  (s/join separator (cons "assets" strs)))
+
