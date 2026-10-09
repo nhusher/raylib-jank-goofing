@@ -1,0 +1,19 @@
+(ns raylib-jank-goofing.work)
+
+(defonce work (atom []))
+
+(defn enqueue-work! [f]
+  (let [p (promise)]
+    (swap! work conj #(deliver p (f)))
+    p))
+
+(defn drain-work-queue! []
+  (doseq [f @work]
+    (try 
+      (f)
+      (catch cpp/std.exception e 
+        (prn "Error occurred in job:" (.what e)))))
+  (reset! work []))
+
+(defmacro on-main-thread [body]
+  `@(enqueue-work! (fn [] ~body)))

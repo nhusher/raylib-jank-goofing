@@ -1,12 +1,50 @@
 (ns raylib-jank-goofing.main
-  (:include "raylib.h"))
+  (:include "raylib.h")
+  (:require
+   [raylib-jank-goofing.work :as work]
+   [jank.nrepl.server.core :as repl]))
 
-(defn -main [& args]
-  (cpp/InitWindow 800 450 "raylib game")
+(defonce world
+  (atom { :thing "helicopter" }))
+
+(defn setup! []
+  ;; redefine while experimenting
+  nil)
+
+(defn update! [dt]
+  ;; redefine while experimenting
+  nil)
+
+(defn draw! []
+  ;; redefine while experimenting
+  (cpp/BeginDrawing)
+  (cpp/ClearBackground cpp/RED) 
+
+  (cpp/DrawText
+   (str "hello " (get @world :thing "jank"))
+   20 20 24
+   cpp/BLACK)
+
+  (cpp/EndDrawing))
+
+(defn frame! []
+  (work/drain-work-queue!)
+  (update! (cpp/GetFrameTime))
+  (draw!))
+
+(defn run-game! [frame]
+  (cpp/InitWindow 800 600 "jank playground")
   (cpp/SetTargetFPS 60)
+
+  (setup!)
+
   (while (not (cpp/WindowShouldClose))
-    (cpp/BeginDrawing)
-    (cpp/ClearBackground cpp/RAYWHITE)
-    (cpp/DrawText "Hello from jank!" 190 200 20 cpp/DARKGRAY)
-    (cpp/EndDrawing))
+    (frame))
+
   (cpp/CloseWindow))
+
+(defn -main [& _]
+  ;; TODO: only open the repl in development, duh
+  (repl/background-main)
+  (run-game! #'frame!))
+

@@ -1,0 +1,31 @@
+(ns raylib-jank-goofing.font
+  (:require
+   [raylib-jank-goofing.work :as work])
+  (:include "raylib.h"))
+
+(defn asset-path [s] (str "assets/fonts/" s))
+
+(defn window-scaling [size]
+  (let [scale (.-x (cpp/GetWindowScaleDPI))]
+    (int (* size scale))))
+
+(defn load-font [name weight size]
+  (let [path (asset-path (str name "-" weight ".ttf"))]
+    (when-not (cpp/IsWindowReady)
+      (throw (ex-info "Window not ready!" {})))
+    ;; Repl segfaults if you LoadFontEx on a font file that doesn't exist.
+    (when-not (cpp/FileExists path)
+      (throw (ex-info "Font does not exist" {:path path})))
+
+    (cpp/box
+     (cpp/new cpp/Font
+              (cpp/LoadFontEx
+               (asset-path (str name "-" weight ".ttf"))
+               (cpp/cast cpp/int (window-scaling size))
+               cpp/nullptr
+               0)))))
+
+
+@(work/enqueue-work! #(load-font "Lato" "Black" 32))
+
+(work/on-main-thread (load-font "Lato" "Black" 16))

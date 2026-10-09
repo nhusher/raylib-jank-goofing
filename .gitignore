@@ -1,3 +1,8 @@
 .DS_Store
 .nrepl-port
+.clj-kondo/.cache
+.idea
+.lsp/.cache
+.calva/
+.jank-repl-history
 target/
